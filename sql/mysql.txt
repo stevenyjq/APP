@@ -1,0 +1,5 @@
+用户:root
+密码:root
+数据库名：steven
+目前数据表
+Member;　会员表

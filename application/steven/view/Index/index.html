@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>KDX ERP 1.0</title>
+  <script type="text/javascript" src="__PUBLIC__/JS/jquery-easyui-1.4.3/jquery.min.js"></script>
+  <script type="text/javascript" src="__PUBLIC__/JS/jquery-easyui-1.4.3/jquery.easyui.min.js"></script>
+  <script type="text/javascript" src="__PUBLIC__/JS/jquery-easyui-1.4.3/locale/easyui-lang-zh_CN.js" charset="UTF-8">
+  </script>
+  <script type="text/javascript" src="__PUBLIC__/JS/syUtils.js" charset="UTF-8"></script>
+    <script type="text/javascript" src="__PUBLIC__/JS/syBasc.js" charset="UTF-8"></script>
+  <link rel="stylesheet" type="text/css" href="__PUBLIC__/JS/jquery-easyui-1.4.3/themes/default/easyui.css">
+  <link rel="stylesheet" type="text/css" href="__PUBLIC__/JS/jquery-easyui-1.4.3/themes/icon.css">
+
+
+    <script type="text/javascript" charset="UTF-8">  
+     
+    sy.ns('sy.basc');  //定义Basc 变量所有页面都能通用，
+    sy.basc.mx=function(){  /*最大化窗口*/
+      $("body").layout("full");
+    }
+    sy.basc.min=function(){  /*最小化窗口*/
+      $("body").layout("unFull");
+    }
+
+  // $('#maindiv').tabs({    
+  //      border:false,    
+  //       onSelect:function(title){    
+  //           alert(title+' is selected');    
+  //       } 
+  //   });  
+
+
+
+         
+       // Tabs 实现代码
+    sy.basc.addtab= function (title,url){
+        if ($('#maindiv').tabs('exists', title)){
+            //alert("显示已经打开过的窗口"+title);
+            $('#maindiv').tabs('select', title);
+        } else {
+            //alert("新开窗口"+url);
+            // var content = '<iframe scrolling="auto" frameborder="0"  src="'+url+'" data-options="split:true" ></iframe>';
+            // var content = '';
+            $('#maindiv').tabs('add',{
+                title:title,
+                href:url,
+                closable:true,
+            });
+            $('#maindiv').tabs({
+              // onClose:function(title,index){
+              //   if(title ="订单录入"){
+              //     $("#addoderuidiv").remove();
+              //     alert(title+"删除完成");
+              //   }
+              // }
+              onBeforeClose: function(title,index){
+                var target = this;
+                $.messager.confirm('确认','你确认想要关闭'+title,function(r){
+                    if (r){
+                      return true;    
+                    }
+                });
+                return false;  // 阻止关闭
+              }
+            });
+        }
+    };  
+
+
+
+
+        //树形菜单实现
+      $('.easyui-accordion li a').click(function () {
+         var tabTitle = $(this).text();
+         var url = $(this).attr("href");
+         addTab(tabTitle, url);
+         $('.easyui-accordion li div').removeClass("selected");
+         $(this).parent().addClass("selected");
+         }).hover(function () {
+             $(this).parent().addClass("hover");
+         }, 
+         function () {
+         $(this).parent().removeClass("hover");
+     });
+        
+    </script>
+
+
+
+</head>
+<body class="easyui-layout">
+  <div region="north"  split ="true" style="height:100px">
+            KDX-订单管理系统  <br>
+      {$Think.session.name}　<br>
+      <a href="__ROOT__/Home/Public/logout">退出</a>
+  </div>
+ <!--  <div data-options="region:'south',collapsed:true" title="状态" style="height:100px">
+ </div> -->
+  <div class="st_tree" data-options="region:'west',split:true,title:'导航菜单'" style="width:150px;padding:10px;">
+        <div id="aa" class="easyui-accordion" style="position: absolute; top: 27px; left: 0px; right: 0px; bottom: 0px;">
+ 
+            <div title="订单管理" iconcls="icon-save" style="overflow: auto; padding: 10px;">
+                <ul class="easyui-tree">
+                    <li>
+                        <span>Folder</span>
+                        
+                    </li>
+                    <li>
+                        <span><a href="#">File21</a></span>
+                    </li>
+                    <li>
+                        <span><a href="#"  onclick="sy.basc.addtab('业务订单','__ROOT__/Home/Order')">业务订单</a>
+                                        </span>
+                    </li>
+                </ul>
+            </div>
+            <div title="用户管理" iconcls="icon-reload"  style="padding: 10px;">
+
+                <ul class="easyui-tree">
+                    <li>
+                        <span>
+                        <a href="# " onclick="sy.basc.addtab('用户列表','__ROOT__/Home/User')">用户列表</a>
+                        </span>                       
+                    </li>
+
+                    <li>
+                        <a href="#" onclick="sy.basc.addtab('权限管理','__ROOT__/Home/User/')">权限管理</a>                     
+                    </li>
+
+                    <li>
+                        <a href="#" onclick="sy.basc.addtab('测试','__ROOT__/Home/Public/test')">测试</a>                     
+                    </li>
+
+                </ul>
+            </div>
+            <div title="业务订单" selected="true">
+                <ul class="easyui-tree">
+                     <li>
+                        <a href="#" onclick="sy.basc.addtab('待审核订单','__ROOT__/Home/Order')">订单审核</a>                     
+                    </li>
+
+                    <li>
+                        <a href="#" onclick="sy.basc.addtab('订单录入','__ROOT__/Home/Order/addOderUi')">订单录入</a>                     
+                    </li>
+
+                    <li>
+                        <a href="#" onclick="sy.basc.addtab('订单追踪','__ROOT__/Home/Order')">订单追踪</a>                     
+                    </li>                    
+                </ul>    
+            </div>
+        </div>
+  </div>
+  <div data-options="region:'east',split:true,collapsed:true" title="East" style="width:180px;"></div>
+  <div region="center"  style="overflow:hidden;">
+    <!-- <div id="tt" class="easyui-tabs" fit="true" border="false" > -->
+    <div id="maindiv" class="easyui-tabs"  fit="true" border="false">
+    </div>    
+  </div>
+ 
+</body>
+</html>
